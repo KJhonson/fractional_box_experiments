@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="1.0">
+  <Collection>
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000000.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000001.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000002.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000003.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000004.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000005.pvtu" />
+    <DataSet timestep="0" part="0" file="anisotropic_solutions000006.pvtu" />
+  </Collection>
+</VTKFile>
