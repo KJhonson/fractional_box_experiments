@@ -1,2 +1,0 @@
-resolve.m --> solves Laplacian in one dimension (cases 1,2,3)
-errest.m --> estimates the error (max norm) in the case 2
