@@ -1,13 +1,58 @@
 library(Matrix)
+library(fmesher)
+library(rSPDE)
 library(future)
 library(future.apply)
 
-# Load workspace and optimized solver
-load("checkpoint.RData")  # Assumes B, A, overkill_env, approx_env, levels are saved
+source("Basic_functions.R")
+source("Dualmesh(final+parallelize).R")
 source("sinc_solver_opt.R")
+
+kappa <- 1
+
+
+## Creating overkill base env
+
+overkill_env <- base_env(8, "LM", 2, kappa)
+
+levels <- c(2,3,4,5,6,7)
+
+approx_env <- base_env(levels, "LM", 2, kappa)
+
+## Auxiliary matrices
+
+print("Start building B")
+
+B <- list()
+for (i in seq_along(approx_env)) {
+B[[i]] <- dm_evaluator(approx_env[[i]]$mesh, overkill_env$mesh, boundary=TRUE)
+}
+
+print("B builted")
+
+A <- list()
+for (i in seq_along(approx_env)) {
+A[[i]] <- fm_evaluator(approx_env[[i]]$mesh, overkill_env$mesh$loc[, 1:2])$proj$A
+}
+
+# Save and reload a runtime-generated checkpoint. This keeps the experiment
+# self-contained while allowing the expensive mesh/matrix setup to be inspected
+# or reused after a run; checkpoint.RData is generated output and is ignored by Git.
+save.image(file = "checkpoint.RData")
+
+# Remove all objects from the environment
+# rm(list = ls())
+
+# Load the saved workspace
+
+load("checkpoint.RData")
+
+kappa <- 1
+
 
 # Experiment configuration
 betas <- c(0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+beta_for_k <- min(betas)
 
 # Function f
 x <- overkill_env$mesh$loc[, 1]
@@ -19,40 +64,6 @@ func <- function(x, y) {
   val[!inside] <- NA
   return(val)
 }
-
-# func <- function(x,y) as.numeric(sin(8*pi*x) > 0)  #L^2 example.
-# f <- func(x, y)
-
-# func <- function(x, y, alpha = 0.0001, N = 200L) {
-#   # Highly optimized vectorized version - replaces O(N^2) nested loops
-#   # with efficient matrix operations
-#   m_vec <- 1:N
-#   n_vec <- 1:N
-  
-#   # Pre-compute sin matrices: [n_points x N]
-#   # M_x[i,m] = sin(pi*m*x[i]), M_y[i,n] = sin(pi*n*y[i])
-#   M_x <- outer(x, m_vec, function(xi, m) sin(pi * m * xi))
-#   M_y <- outer(y, n_vec, function(yi, n) sin(pi * n * yi))
-  
-#   # Pre-compute denominator matrix D[m,n] = (1 + m^2 + n^2)^((1+alpha)/2): [N x N]
-#   # Using vectorized operations instead of loops
-#   m_grid <- matrix(m_vec, N, N, byrow = FALSE)
-#   n_grid <- matrix(n_vec, N, N, byrow = TRUE)
-#   D <- (1 + m_grid^2 + n_grid^2)^((1 + alpha) / 2)
-#   inv_D <- 1 / D
-  
-#   # Efficient computation: for each point i:
-#   # s[i] = sum_m sum_n M_x[i,m] * M_y[i,n] / D[m,n]
-#   #      = sum_m M_x[i,m] * (sum_n M_y[i,n] / D[m,n])
-#   # Compute: temp = M_y %*% inv_D gives [n_points x N] where
-#   # temp[i,m] = sum_n M_y[i,n] / D[m,n]
-#   temp <- M_y %*% inv_D
-  
-#   # Then: s[i] = sum_m M_x[i,m] * temp[i,m] = rowSums(M_x * temp)
-#   s <- rowSums(M_x * temp)
-  
-#   return(s)
-# }
 
 f <- func(x, y)
 
@@ -71,7 +82,7 @@ h_overkill <- overkill_env$h
 
 # Pre-compute shifts (cache) per mesh with dynamic k
 # Dynamic k for overkill
-k_overkill <- sinc_dynamic_k(h_overkill, beta)
+k_overkill <- sinc_dynamic_k(h_overkill, beta_for_k)
 rng_over <- sinc_range_for_betas(betas, k_overkill)
 
 # Overkill cache
@@ -90,7 +101,7 @@ k_approx <- numeric(length(approx_env))
 
 for (i in seq_along(approx_env)) {
   g_approx <- t(B[[i]]) %*% RHS_over
-  k_approx[i] <- sinc_dynamic_k(h[i], beta)
+  k_approx[i] <- sinc_dynamic_k(h[i], beta_for_k)
   rng_approx <- sinc_range_for_betas(betas, k_approx[i])
   
   caches_approx[[i]] <- sinc_precompute_shifts(

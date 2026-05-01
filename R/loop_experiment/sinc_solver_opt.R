@@ -20,7 +20,7 @@ suppressPackageStartupMessages({
 # --- 0) Calcula k dinâmico baseado no mesh size ---
 sinc_dynamic_k <- function(h, beta) {
   stopifnot(h > 0 & h < 1)
-  pi^2 / (-6*beta * log(h))
+  pi^2 / (-6 * log(h))
 }
 
 # --- 1) Descobrir intervalo [lmin, lmax] que cobre TODAS as betas ---

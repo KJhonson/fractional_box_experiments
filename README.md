@@ -3,7 +3,7 @@
 Clean repository for finite-element and fractional-operator experiments collected from:
 
 - `FEM_project`: Python/FEniCSx 1D FEM/FVM fractional experiments and helpers.
-- `error_analysis_lab/loop_experimental.R`: R 2D error-analysis loop using a saved checkpoint and optimized sinc solver.
+- `error_analysis_lab/loop_experimental.R`: self-contained R 2D error-analysis loop that builds its mesh and transfer matrices before running the optimized sinc solver.
 
 The original source folders were not modified.
 
@@ -22,8 +22,6 @@ The original source folders were not modified.
 │   └── loop_experiment/
 │       ├── loop_experimental.R
 │       ├── sinc_solver_opt.R
-│       ├── checkpoint.RData
-│       ├── num_exp_deterministic.R
 │       ├── Basic_functions.R
 │       └── Dualmesh(final+parallelize).R
 └── outputs/
@@ -53,20 +51,22 @@ Generated `.dat` result folders, Python bytecode caches, logs, and system files 
 
 ### R Loop Experiment from `error_analysis_lab`
 
-`R/loop_experiment/loop_experimental.R` was copied with its direct dependencies:
+`R/loop_experiment/loop_experimental.R` is self-contained with respect to experiment state. It does not require a precomputed `checkpoint.RData`; instead it builds:
 
-- `sinc_solver_opt.R`, sourced by `loop_experimental.R`.
-- `checkpoint.RData`, loaded directly by `loop_experimental.R`.
+- `overkill_env` via `base_env(8, "LM", 2, kappa)`
+- `approx_env` via `base_env(levels, "LM", 2, kappa)`
+- dual-mesh transfer matrices `B` via `dm_evaluator(...)`
+- interpolation matrices `A` via `fmesher::fm_evaluator(...)`
 
-The following files were also included because they appear to define or regenerate
-objects stored in `checkpoint.RData`:
+After building those objects, the script writes and reloads a local
+`checkpoint.RData` during the run. That file is generated output and is ignored
+by Git.
 
-- `num_exp_deterministic.R`
-- `Basic_functions.R`
-- `Dualmesh(final+parallelize).R`
+Direct local dependencies:
 
-The checkpoint is large, but it is included because the loop script directly loads
-it and does not run without it.
+- `Basic_functions.R`: defines `base_env()` and mass-matrix helper routines.
+- `Dualmesh(final+parallelize).R`: defines `dm_evaluator()` and dual-mesh utilities.
+- `sinc_solver_opt.R`: defines dynamic sinc quadrature cache and assembly helpers.
 
 ## Setup
 
@@ -87,11 +87,12 @@ Required or inferred R packages:
 - `splancs`
 - `sf`
 - `doSNOW`
+- `foreach`
 
 Install from R as needed:
 
 ```r
-install.packages(c("Matrix", "future", "future.apply", "sf", "doSNOW"))
+install.packages(c("Matrix", "future", "future.apply", "sf", "doSNOW", "foreach"))
 ```
 
 `fmesher` and `rSPDE` may require their project-specific installation instructions.
@@ -121,8 +122,8 @@ Run commands from the repository root unless noted.
 
 ### R Loop Experiment
 
-The R script uses relative paths to `checkpoint.RData` and `sinc_solver_opt.R`, so
-run it from its own directory:
+The R script sources helper files with relative paths, so run it from its own
+directory:
 
 ```sh
 cd R/loop_experiment
@@ -131,10 +132,15 @@ Rscript loop_experimental.R
 
 Expected generated outputs:
 
+- `R/loop_experiment/checkpoint.RData`
 - `R/loop_experiment/errors2d.dat`
 - `R/loop_experiment/betaxslope.dat`
 
-These result tables are ignored by Git because they can be regenerated.
+These generated files are ignored by Git because they can be regenerated.
+
+The script builds meshes and transfer matrices at runtime, then saves that state
+to `checkpoint.RData`. This replaces the former dependency on a pre-existing
+checkpoint and can be substantially more expensive than loading a saved workspace.
 
 ### Python 1D Experiments
 
@@ -159,9 +165,10 @@ generated output directories are ignored by Git.
 No small standalone input data files were detected for the copied Python scripts.
 Most inputs are parameters embedded in the experiment scripts.
 
-The R loop depends on `checkpoint.RData`, which contains precomputed mesh and matrix
-objects such as `B`, `A`, `overkill_env`, `approx_env`, and `levels` according to
-comments in the source script.
+The R loop does not require external input data. Its inputs are the parameters in
+`loop_experimental.R`, including `kappa`, `levels`, and `betas`. Meshes and
+matrices are generated at runtime by the included helper scripts. The generated
+checkpoint is an intermediate output, not a source input.
 
 Outputs are mostly `.dat` tables containing errors and fitted slopes. Previously
 generated outputs from the messy source folders were not copied.
@@ -175,17 +182,20 @@ relative path assumptions:
 
 - Python sources are under `python_fem/`, with `1d_experiments/` and `utils/` as
   siblings.
-- R loop files are colocated under `R/loop_experiment/`, matching the original
-  script's `load("checkpoint.RData")` and `source("sinc_solver_opt.R")` calls.
+- R loop files are colocated under `R/loop_experiment/`, matching the script's
+  relative `source(...)` calls.
 
-Because of this, no source path rewrites were required.
+The R loop was changed from a precomputed-checkpoint form to a self-contained
+form. It now calls `base_env()`, `dm_evaluator()`, and `fm_evaluator()` before
+writing and reloading a runtime-generated `checkpoint.RData`. The previously
+implicit dynamic-k beta was made explicit as `beta_for_k <- min(betas)` so the
+precomputed sinc range is based on the most restrictive beta in the experiment
+list.
 
 ## Reproducibility Notes
 
-- The R checkpoint was included because it is required by `loop_experimental.R`.
-- `num_exp_deterministic.R` includes commented checkpoint-generation code. It was
-  included as provenance for the checkpoint, but the exact saved state in
-  `checkpoint.RData` should be treated as the authoritative input for the loop.
+- The R loop now regenerates mesh and transfer-matrix state on each run before
+  writing a local checkpoint.
 - The Python experiments may be computationally expensive and require a working
   MPI/PETSc/FEniCSx environment.
 - Validation performed during cleanup was limited to file listing, local reference
@@ -193,8 +203,9 @@ Because of this, no source path rewrites were required.
 
 ## Known Uncertainties
 
-- `checkpoint.RData` is a large generated artifact, but it is also a direct runtime
-  dependency of `loop_experimental.R`.
+- The self-contained R loop may take significantly longer than the older
+  precomputed-checkpoint version because it rebuilds `overkill_env`,
+  `approx_env`, `A`, and `B`.
 - Some Python files named like tests or playgrounds were retained because they
   import shared FEM helpers and may document validation workflows.
 - `fmesher` and `rSPDE` installation sources were not inferred from the local files.

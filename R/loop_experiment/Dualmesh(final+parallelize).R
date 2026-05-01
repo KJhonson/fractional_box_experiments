@@ -15,6 +15,7 @@ library(Matrix)   # For sparse matrix operations and linear algebra
 library(splancs)  # For spatial point pattern analysis and polygon operations
 library(sf)       # For spatial data handling and geometric operations
 library(doSNOW)   # For parallel computing using SNOW clusters
+library(foreach)  # For foreach/%dopar% loops registered through doSNOW
 library(parallel) # For detectCores() and parallel processing functions
 
 
