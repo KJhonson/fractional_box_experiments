@@ -340,34 +340,33 @@ def assemble_fv_load_xalpha(x, alpha):
 
 def dst_type1(x):
     """
-    Implementação autêntica da DST-I (Discrete Sine Transform type 1) que corresponde
-    exatamente ao comportamento do scipy.fftpack.dst(x, type=1).
+    Direct DST-I implementation matching scipy.fftpack.dst(x, type=1).
     
     DST-I de um vetor x de tamanho M:
         y_k = 2 * sum_{j=1}^{M} x_j * sin(pi * j * k / (M+1))
     
-    O fator 2 garante compatibilidade com scipy.fftpack.dst(type=1).
+    The factor 2 ensures compatibility with scipy.fftpack.dst(type=1).
     
-    Parâmetros:
+    Parameters:
     -----------
     x : array_like
-        Vetor de entrada de tamanho M
+        Input vector of length M.
     
-    Retorna:
+    Returns:
     --------
     y : np.ndarray
-        Transformada DST-I de tamanho M (compatível com scipy)
+        DST-I transform of length M, compatible with scipy.
     """
     M = len(x)
     k = np.arange(1, M + 1)
     j = np.arange(1, M + 1)
     
-    # Matriz de transformação: sin(pi * j * k / (M+1))
+    # Transform matrix: sin(pi * j * k / (M+1)).
     j_mat = j[:, np.newaxis]  # shape (M, 1)
     k_mat = k[np.newaxis, :]   # shape (1, M)
     sin_matrix = np.sin(np.pi * j_mat * k_mat / (M + 1))
     
-    # Aplicar transformada com fator 2 para corresponder ao scipy
+    # Apply the transform with factor 2 to match scipy.
     y = 2.0 * (sin_matrix.T @ x)  # shape (M,)
     
     return y
@@ -375,38 +374,38 @@ def dst_type1(x):
 
 def reference_solution(alpha, beta, M=500, N=None, x_eval=None):
     """
-    Solução espectral de alta precisão para (-d^2/dx^2)^beta u = x^{-alpha}, u(0)=u(1)=0.
-    Usa DST-I (Discrete Sine Transform) - método mais rápido e preciso segundo benchmark.
-    Implementação autêntica da DST-I diretamente no código (sem dependência do scipy).
+    High-accuracy spectral solution for (-d^2/dx^2)^beta u = x^{-alpha}, u(0)=u(1)=0.
+    Uses DST-I (Discrete Sine Transform), which is fast and accurate in the benchmark.
+    The DST-I implementation is included directly in the code.
     
-    Parâmetros:
+    Parameters:
     ------------
     alpha : float
-        Exponente da força (0 < alpha < 1/2).
+        Source exponent (0 < alpha < 1/2).
     beta : float
-        Ordem fracionária (> 0).
+        Fractional order (> 0).
     M : int
-        Número de pontos internos da malha (x_j = j/(M+1)). Padrão: 500 (ótimo equilíbrio velocidade/precisão).
+        Number of interior mesh points (x_j = j/(M+1)). Default: 500.
     N : int, optional
-        Número de modos usados na solução (<= M). Se None, usa N = M.
+        Number of modes used in the solution (<= M). If None, uses N = M.
     x_eval : array-like, optional
-        Pontos em (0,1) onde avaliar a solução. Se None, usa 200 pontos uniformes.
+        Points in (0, 1) where the solution is evaluated. If None, uses 200 uniform points.
     
-    Retorna:
+    Returns:
     --------
     x_eval : np.ndarray
-        Pontos de avaliação.
+        Evaluation points.
     u_vals : np.ndarray
-        Valores da solução u(x) nesses pontos.
+        Solution values u(x) at those points.
     """
     if x_eval is None:
-        x_eval = np.linspace(0, 1, 500)[1:-1]  # evita os extremos 0 e 1 (onde u=0), mais pontos = melhor visualização
+        x_eval = np.linspace(0, 1, 500)[1:-1]  # avoid endpoints 0 and 1, where u=0
     x_eval = np.asarray(x_eval)
 
     if N is None or N > M:
         N = M
 
-    # pontos da malha
+    # Mesh points.
     j = np.arange(1, M + 1)
     x = j / (M + 1)
     dx = 1.0 / (M + 1)
@@ -414,10 +413,10 @@ def reference_solution(alpha, beta, M=500, N=None, x_eval=None):
     # f(x) = x^{-alpha}
     f_vals = x**(-alpha)
 
-    # DST-I não normalizada (implementação autêntica compatível com scipy)
+    # Unnormalized DST-I compatible with scipy.
     y = dst_type1(f_vals)   # len M
 
-    # coeficientes contínuos f_n ≈ sqrt(2)/(2(M+1)) * y_{n-1}
+    # Continuous coefficients f_n approx sqrt(2)/(2(M+1)) * y_{n-1}.
     n_vals = np.arange(1, N + 1)
     f_n = np.sqrt(2.0) * dx * 0.5 * y[:N]   # = sqrt(2)/(2(M+1)) * y
 
@@ -967,4 +966,3 @@ if MPI.COMM_WORLD.rank == 0:
     print("="*70 + "\n")
 
 # %%
-

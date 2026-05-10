@@ -1,12 +1,12 @@
 # ===============================
 # Sinc quadrature with shift cache
 # ===============================
-# Este arquivo expõe três funções:
+# This file defines three functions:
 # 1) sinc_range_for_betas(betas, k)
 # 2) sinc_precompute_shifts(A, C, RHS, k, lmin, lmax, parallel, workers)
 # 3) sinc_assemble_from_cache(cache, beta)
 #
-# Fluxo típico:
+# Typical workflow:
 #   rng   <- sinc_range_for_betas(betas, k)
 #   cache <- sinc_precompute_shifts(A, C, RHS, k, rng$lmin, rng$lmax, TRUE, 4)
 #   u     <- sinc_assemble_from_cache(cache, beta)
@@ -17,13 +17,13 @@ suppressPackageStartupMessages({
   library(future.apply)
 })
 
-# --- 0) Calcula k dinâmico baseado no mesh size ---
+# --- 0) Compute the dynamic k from the mesh size ---
 sinc_dynamic_k <- function(h, beta) {
   stopifnot(h > 0 & h < 1)
   pi^2 / (-6 * log(h))
 }
 
-# --- 1) Descobrir intervalo [lmin, lmax] que cobre TODAS as betas ---
+# --- 1) Find the interval [lmin, lmax] covering all beta values ---
 sinc_range_for_betas <- function(betas, k) {
   stopifnot(all(betas > 0 & betas < 1), k > 0)
   N_of <- function(b) as.integer(ceiling(pi^2 / (2 * b       * k^2)))
@@ -33,7 +33,7 @@ sinc_range_for_betas <- function(betas, k) {
   list(lmin = lmin, lmax = lmax)
 }
 
-# --- 2) Pré-cálculo (cache) de (A + t_l C)^{-1} * RHS em l ∈ [lmin, lmax] ---
+# --- 2) Precompute the cache of (A + t_l C)^{-1} * RHS for l in [lmin, lmax] ---
 sinc_precompute_shifts <- function(A, C, RHS, k, lmin, lmax,
                                    parallel = TRUE,
                                    workers  = max(1L, parallel::detectCores() - 2L)) {
@@ -45,12 +45,12 @@ sinc_precompute_shifts <- function(A, C, RHS, k, lmin, lmax,
   ls  <- seq.int(lmin, lmax)
   tks <- exp(ls * k)
 
-  # Fatoração simbólica de referência (mesmo padrão esparso e ordenação)
+  # Reference symbolic factorization with the same sparsity pattern and ordering.
   tk_ref <- 1.0
   Af_ref  <- forceSymmetric(A + tk_ref * C, uplo = "L")
   Af_refS <- as(Af_ref, "dsCMatrix")
   Fsym <- Cholesky(Af_refS, LDL = FALSE, perm = TRUE, super = TRUE)
-  cat("✅ Cache: symbolic pattern pronto.\n")
+  cat("Cache: symbolic pattern ready.\n")
 
   solve_one <- function(tk) {
     Af  <- forceSymmetric(A + tk * C, uplo = "L")
@@ -82,29 +82,29 @@ sinc_precompute_shifts <- function(A, C, RHS, k, lmin, lmax,
     k    = k,
     ls   = ls,
     tks  = tks,
-    sols = sols,        # lista; cada elemento é n x r (mesma shape de RHS)
+    sols = sols,        # list; each element is n x r with the same shape as RHS
     ncol_rhs = ncol(RHS)
   )
 }
 
-# --- 3) Montagem para um beta específico a partir do cache ---
+# --- 3) Assemble the solution for a specific beta from the cache ---
 sinc_assemble_from_cache <- function(cache, beta) {
   stopifnot(beta > 0 && beta < 1)
   k  <- cache$k
   ls <- cache$ls
 
-  # Calcula M e N específicos para este beta exato
+  # Compute M and N for this beta value.
   N  <- as.integer(ceiling(pi^2 / (2 * beta       * k^2)))
   M  <- as.integer(ceiling(pi^2 / (2 * (1 - beta) * k^2)))
   need_ls <- (-M):N
 
-  # Verifica se o cache cobre todos os l necessários
+  # Check whether the cache covers all required l values.
   if (min(need_ls) < min(ls) || max(need_ls) > max(ls)) {
-    stop("Cache insuficiente para este beta; aumente lmin/lmax no precompute.")
+    stop("Insufficient cache for this beta; increase lmin/lmax in the precompute step.")
   }
   idx <- match(need_ls, ls)
 
-  # Calcula os pesos corretos usando M e N específicos
+  # Compute the weights using beta-specific M and N.
   c0  <- (k * sin(pi * beta)) / pi
   wks <- c0 * exp((1 - beta) * need_ls * k)
 

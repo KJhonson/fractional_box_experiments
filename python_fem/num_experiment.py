@@ -18,13 +18,13 @@ from playground import compute_errors_refined, dynamic_k
 from dolfinx.fem import petsc
 from petsc4py import PETSc
 
-# --- Cálculo dos coeficientes f_k ---
+# --- Compute the f_k coefficients ---
 def fk_continuo(k, alpha):
     integrand = lambda x: (x ** (-alpha)) * sin(k * pi * x)
     val = quad(integrand, [0, 1])
     return np.sqrt(2.0) * float(val)
 
-# --- Solução espectral contínua ---
+# --- Continuous spectral solution ---
 def solve_spectral_continua(alpha, beta, K, x_grid):
     uvals = np.zeros_like(x_grid, dtype=float)
     for k in range(1, K + 1):
@@ -476,8 +476,8 @@ if __name__ == "__main__":
     # x = np.linspace(0, 1, N+2)[1:-1]
     # u_spec = solve_spectral_continua(alpha, beta, K, x)
     # fig, ax = plt.subplots(figsize=(8, 4.5))
-    # ax.plot(x, u_spec, 'r-', lw=2, label=f'Solução espectral (α={alpha}, β={beta})')
-    # ax.set_title(f"Solução espectral contínua – α={alpha}, β={beta}, K={K}")
+    # ax.plot(x, u_spec, 'r-', lw=2, label=f'Spectral solution (alpha={alpha}, beta={beta})')
+    # ax.set_title(f"Continuous spectral solution - alpha={alpha}, beta={beta}, K={K}")
     # ax.set_xlabel("x")
     # ax.set_ylabel("u(x)")
     # ax.legend(loc='best')
