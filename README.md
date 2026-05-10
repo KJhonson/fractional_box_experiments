@@ -18,7 +18,7 @@ Numerical experiments for fractional elliptic operators using FEM/FVM discretiza
 
 ## R Experiment
 
-The main R experiment is:
+The two-dimensional experiment is:
 
 ```text
 R/loop_experiment/loop_experimental.R
@@ -48,11 +48,16 @@ Output files:
 
 ## Python Experiments
 
-The Python experiments are in:
+The one-dimensional experiments are in:
 
 ```text
 python_fem/1d_experiments/
 ```
+
+Main entry points:
+
+- `f_ex_indicator.py` and `f_ex_indicator_v2.py`: indicator-function experiments.
+- `f_ex_xalpha.py`: `x^(-alpha)` experiment.
 
 Example commands:
 
