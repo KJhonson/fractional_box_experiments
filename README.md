@@ -56,7 +56,7 @@ python_fem/1d_experiments/
 
 Main entry points:
 
-- `f_ex_indicator.py` and `f_ex_indicator_v2.py`: indicator-function experiments.
+- `f_ex_indicator.py`: indicator-function experiment.
 - `f_ex_xalpha.py`: `x^(-alpha)` experiment.
 
 Example commands:
