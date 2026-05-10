@@ -2,12 +2,12 @@
 # Functions for plotting FEM solutions and domains
 #
 # STANDARD FEATURES (applied by default):
-# ✅ Solid blue lines for numerical solutions (with node markers)
-# ✅ Dashed red lines for exact solutions (smooth continuous)
-# ✅ Smart y-axis scaling with breathing room (5% below, 20% above)
-# ✅ Linear scale for zero errors, log scale for non-zero ranges
-# ✅ Memory-based display for Jupyter (no unwanted files)
-# ✅ High-resolution exact solutions (200 points) vs discrete numerical (at nodes)
+# Solid blue lines for numerical solutions (with node markers)
+# Dashed red lines for exact solutions (smooth continuous)
+# Smart y-axis scaling with breathing room (5% below, 20% above)
+# Linear scale for zero errors, log scale for non-zero ranges
+# Memory-based display for Jupyter (no unwanted files)
+# High-resolution exact solutions (200 points) vs discrete numerical (at nodes)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -71,7 +71,7 @@ def visualize_domain(mesh, save_plot=False, filename="domain.png"):
             
             if save_plot:
                 plt.savefig(filename, dpi=300, bbox_inches='tight')
-                print(f"✅ Domain plot saved to: {filename}")
+                print(f"Domain plot saved to: {filename}")
                 plt.show()
                 try:
                     display(Image(filename))
@@ -90,7 +90,7 @@ def visualize_domain(mesh, save_plot=False, filename="domain.png"):
                     plt.show()
             
         else:
-            print(f"ℹ️  Domain visualization for {mesh.topology.dim}D meshes not implemented")
+            print(f"Domain visualization for {mesh.topology.dim}D meshes not implemented")
 
 def plot_1d_dirichlet_solution(mesh, u_h, exact_solution_func, save_plot=False, filename="solution_1d_dirichlet.png", 
                               use_breathing_room=True, show_node_markers=True, use_scientific_notation=True,
@@ -205,7 +205,7 @@ def plot_1d_dirichlet_solution(mesh, u_h, exact_solution_func, save_plot=False, 
         
         if save_plot:
             plt.savefig(filename, dpi=300, bbox_inches='tight')
-            print(f"✅ Dirichlet solution plot saved to: {filename}")
+            print(f"Dirichlet solution plot saved to: {filename}")
             plt.show()
             try:
                 display(Image(filename))
@@ -229,7 +229,7 @@ def plot_1d_dirichlet_solution(mesh, u_h, exact_solution_func, save_plot=False, 
         else:
             return l2_error_computed, max_error_computed
     else:
-        print("ℹ️  Plot only available on rank 0 for 1D meshes")
+        print("Plot only available on rank 0 for 1D meshes")
         return None, None
 
 def plot_1d_neumann_solution(mesh, u_h, exact_solution_func, save_plot=False, filename="solution_1d_neumann.png",
@@ -338,7 +338,7 @@ def plot_1d_neumann_solution(mesh, u_h, exact_solution_func, save_plot=False, fi
             l2_error_computed = np.sqrt(np.trapz(error**2, x_nodes))
             max_error_computed = np.max(error)
             if verbose:
-                print(f"⚠️  Using simple error computation (L2: {l2_error_computed:.2e}, Max: {max_error_computed:.2e})")
+                print(f"Warning: Using simple error computation (L2: {l2_error_computed:.2e}, Max: {max_error_computed:.2e})")
             error_title = f'Neumann BC - L2 Error: {l2_error_computed:.2e}, Max Error: {max_error_computed:.2e}'
         else:
             # Use provided comprehensive errors
@@ -351,7 +351,7 @@ def plot_1d_neumann_solution(mesh, u_h, exact_solution_func, save_plot=False, fi
         
         if save_plot:
             plt.savefig(filename, dpi=300, bbox_inches='tight')
-            print(f"✅ Neumann solution plot saved to: {filename}")
+            print(f"Neumann solution plot saved to: {filename}")
             plt.show()
             try:
                 display(Image(filename))
@@ -375,7 +375,7 @@ def plot_1d_neumann_solution(mesh, u_h, exact_solution_func, save_plot=False, fi
         else:
             return l2_error_computed, max_error_computed
     else:
-        print("ℹ️  Plot only available on rank 0 for 1D meshes")
+        print("Plot only available on rank 0 for 1D meshes")
         return None, None
 
-print("✅ Plot visualization functions loaded and ready for main.py")
+print("Plot visualization functions loaded and ready for main.py")

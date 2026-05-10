@@ -335,7 +335,7 @@ def test_custom_neumann_convergence():
     
     # Save plot
     plt.savefig('/home/dolfinx/shared/FEM_project/custom_neumann_combined_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Custom Neumann combined plot saved to: custom_neumann_combined_plot.png")
+    print("Custom Neumann combined plot saved to: custom_neumann_combined_plot.png")
     plt.close()
     
     return {
@@ -555,7 +555,7 @@ def test_singular_dirichlet_convergence():
     
     # Save plot
     plt.savefig('/home/dolfinx/shared/FEM_project/singular_dirichlet_combined_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Singular Dirichlet combined plot saved to: singular_dirichlet_combined_plot.png")
+    print("Singular Dirichlet combined plot saved to: singular_dirichlet_combined_plot.png")
     plt.close()
     
     return {
@@ -832,7 +832,7 @@ def test_exact_integration_convergence(alpha = 0.49):
     
     # Save plot
     plt.savefig('/home/dolfinx/shared/FEM_project/exact_integration_combined_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Exact integration combined plot saved to: exact_integration_combined_plot.png")
+    print("Exact integration combined plot saved to: exact_integration_combined_plot.png")
     plt.close()
     
     return {
@@ -975,7 +975,7 @@ def test_adaptive_mesh_convergence(alpha = 0.49):
     
     # Save plot
     plt.savefig('/home/dolfinx/shared/FEM_project/adaptive_mesh_combined_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Adaptive mesh combined plot saved to: adaptive_mesh_combined_plot.png")
+    print("Adaptive mesh combined plot saved to: adaptive_mesh_combined_plot.png")
     plt.close()
     
     return {
@@ -1115,7 +1115,7 @@ def test_compare_adaptive_meshes(alpha = 0.49):
     
     plt.tight_layout()
     plt.savefig('/home/dolfinx/shared/FEM_project/mesh_comparison_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Mesh comparison plot saved to: mesh_comparison_plot.png")
+    print("Mesh comparison plot saved to: mesh_comparison_plot.png")
     plt.close()
     
     return {
@@ -1256,7 +1256,7 @@ def test_adaptive_mesh_exact_integration_convergence(alpha = 0.49):
     
     # Save plot
     plt.savefig('/home/dolfinx/shared/FEM_project/adaptive_mesh_exact_integration_combined_plot.png', dpi=300, bbox_inches='tight')
-    print("✅ Adaptive mesh + exact integration combined plot saved to: adaptive_mesh_exact_integration_combined_plot.png")
+    print("Adaptive mesh + exact integration combined plot saved to: adaptive_mesh_exact_integration_combined_plot.png")
     plt.close()
     
     return {
@@ -1293,7 +1293,7 @@ if __name__ == "__main__":
     adaptive_exact_results = test_adaptive_mesh_exact_integration_convergence(alpha=alpha)
     
     print("\n" + "=" * 50)
-    print("✅ All testing completed!")
+    print("All testing completed!")
     print("The dual FVM approach provides an alternative way to assemble")
     print("RHS vectors, particularly useful for finite volume methods.")
     print("Custom Neumann problem with piecewise exact solution tested successfully.")

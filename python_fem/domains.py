@@ -140,10 +140,10 @@ def visualize_mesh(mesh, filename="mesh_plot.png", title="Mesh Visualization",
         pl.screenshot(filename, window_size=[800, 600])
         pl.close()
         
-        print(f"✅ Mesh visualization saved to: {filename}")
+        print(f"Mesh visualization saved to: {filename}")
         return filename
     else:
-        print("ℹ️  Visualization only available on rank 0")
+        print("Visualization only available on rank 0")
         return None
 
 # %%

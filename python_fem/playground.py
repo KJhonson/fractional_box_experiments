@@ -571,7 +571,7 @@ def test_frac_neumann_comparison(N=100, beta=0.5, m=2, interval=(2, 11),
     save_plot : bool
         Whether to save the plot
     """
-    print(f"🧪 Comparing methods: {methods_to_compare} (N={N}, β={beta})")
+    print(f"Comparing methods: {methods_to_compare} (N={N}, β={beta})")
     
     # Setup problem
     mesh = make_uniform_interval(N, 0.0, 1.0)
@@ -670,7 +670,7 @@ def test_frac_dirichlet_comparison(N=100, beta=0.5, m=2, interval=(1, 11),
     """
     Compare methods for fractional Dirichlet problem (focus on Sinc for now).
     """
-    print(f"🧪 Comparing methods (Dirichlet): {methods_to_compare} (N={N}, β={beta})")
+    print(f"Comparing methods (Dirichlet): {methods_to_compare} (N={N}, β={beta})")
 
     # Setup problem (Dirichlet)
     mesh = make_uniform_interval(N, 0.0, 1.0)
@@ -785,7 +785,7 @@ def compare_standard_methods(N=20, methods_to_compare=['Standard FEM', 'Sinc'],
     save_plot : bool
         Whether to save the plot
     """
-    print(f"🧪 Comparing Standard Methods (NEUMANN BC, N={N})")
+    print(f"Comparing Standard Methods (NEUMANN BC, N={N})")
     # Setup Neumann problem
     mesh = make_uniform_interval(N, 0.0, 1.0)
     V = fem.functionspace(mesh, ("Lagrange", 1))
@@ -866,7 +866,7 @@ def compare_fractional_methods(N=20, beta=0.5, m=2, interval=(1, 11),
     save_plot : bool
         Whether to save the plot
     """
-    print(f"🧪 Comparing Fractional Methods (NEUMANN BC, N={N}, β={beta})")
+    print(f"Comparing Fractional Methods (NEUMANN BC, N={N}, β={beta})")
     return test_frac_neumann_comparison(N, beta, m, interval, methods_to_compare, show_plot, save_plot)
 
     
@@ -892,7 +892,7 @@ if __name__ == "__main__":
         interval=(0.2, 0.9),
         scale_factor=5
     )
-    print("\n✅ Done. Plot saved in the output directory.")
+    print("\nDone. Plot saved in the output directory.")
     
 # %%    
     # Dirichlet example: Fractional Dirichlet (Sinc) with dynamic k

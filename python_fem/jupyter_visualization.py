@@ -17,24 +17,24 @@ import io
 # Import domain functions
 from domains import make_uniform_rectangle, make_uniform_box, make_uniform_interval
 
-print("✅ Libraries imported - Triangle library available!")
-print("✅ Jupyter display functions ready for headless environment")
+print("Libraries imported - Triangle library available!")
+print("Jupyter display functions ready for headless environment")
 
 # %% Visualization function (working version)
 def plot_mesh(mesh, title="Mesh", color="blue", figsize=(8, 6), save_file=False):
     """
     Jupyter-friendly mesh visualization for headless environment.
     
-    ✅ NO FILES SAVED by default - pure inline display
-    ✅ Works in Docker/headless environments
-    ✅ Displays properly in Jupyter notebooks
+    NO FILES SAVED by default - pure inline display
+    Works in Docker/headless environments
+    Displays properly in Jupyter notebooks
     """
     if mesh.comm.rank != 0:
-        print("ℹ️  Visualization only available on rank 0")
+        print("Visualization only available on rank 0")
         return None
         
     if mesh.topology.dim != 2:
-        print("ℹ️  This function works for 2D meshes only")
+        print("This function works for 2D meshes only")
         return None
     
     points = mesh.geometry.x[:, :2]
@@ -271,7 +271,7 @@ def analyze_mesh_angles(mesh, name="Mesh"):
     
     return min_angles_deg
 
-print("✅ Functions ready")
+print("Functions ready")
 
 # %% Example 1: Basic quality domains
 print("🔧 Example 1: Basic quality domains")
@@ -355,7 +355,7 @@ plot_mesh_clean(mesh_L_clean, "Clean L-Shape", color="darkblue")
 mesh_hole_clean = create_mesh_with_hole(outer_radius=1.0, hole_radius=0.3, min_angle=25, max_area=0.03)
 plot_mesh_clean(mesh_hole_clean, "Clean Circle with Hole", color="darkred")
 
-print("\n✅ All examples completed!")
+print("\nAll examples completed!")
 print("💡 Triangle library provides exact quality control")
 print("💡 Images display properly in Jupyter")
 print("💡 No file saving - pure visualization")

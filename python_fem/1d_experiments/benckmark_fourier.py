@@ -308,25 +308,25 @@ if dst_data:
     dst_min_err = min([r[3] for r in dst_data])
     dst_best = min(dst_data, key=lambda x: x[3])
     print(f"\nDST: Minimum error = {dst_min_err:.2e}")
-    print(f"  ✓ Best configuration: {dst_best[1]}, time={dst_best[2]:.4f}s")
+    print(f"  Best configuration: {dst_best[1]}, time={dst_best[2]:.4f}s")
     if dst_min_err < 1e-2:
-        print("  ✓ Recommended method for speed with good accuracy.")
+        print("  Recommended method for speed with good accuracy.")
 
 if gammainc_data:
     gammainc_min_err = min([r[3] for r in gammainc_data])
     gammainc_best = min(gammainc_data, key=lambda x: x[3])
     print(f"\nGammainc: Minimum error = {gammainc_min_err:.2e}")
-    print(f"  ✓ Best configuration: N={gammainc_best[1]}, time={gammainc_best[2]:.4f}s")
+    print(f"  Best configuration: N={gammainc_best[1]}, time={gammainc_best[2]:.4f}s")
     if gammainc_min_err < 1e-2:
-        print("  ✓ Recommended method for high accuracy.")
+        print("  Recommended method for high accuracy.")
 
 if glq_data:
     glq_min_err = min([r[3] for r in glq_data])
     glq_best = min(glq_data, key=lambda x: x[3])
     print(f"\nGLQ: Minimum error = {glq_min_err:.2e}")
-    print(f"  ✓ Best configuration: {glq_best[1]}, time={glq_best[2]:.4f}s")
+    print(f"  Best configuration: {glq_best[1]}, time={glq_best[2]:.4f}s")
     if glq_min_err < 1e-2:
-        print("  ✓ Recommended method for good accuracy with parameter flexibility.")
+        print("  Recommended method for good accuracy with parameter flexibility.")
 
 # Final recommendation
 print("\n" + "="*70)

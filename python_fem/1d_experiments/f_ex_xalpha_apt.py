@@ -679,7 +679,7 @@ for beta in beta_values_xalpha:
                 if len(errors_adaptive_fem_exact) >= 4:
                     error_ratio = errors_adaptive_fem_exact[-1] / errors_adaptive_fem_exact[-2]
                     if error_ratio > 0.95:  # Error decreased by less than 5%
-                        print(f"  ⚠️  Warning: Errors appear to plateau (ratio={error_ratio:.3f}).")
+                        print(f"  Warning: Errors appear to plateau (ratio={error_ratio:.3f}).")
                         print(f"     This may indicate DST reference solution accuracy limit (M={M_dst}).")
                         print(f"     Consider increasing M_dst or checking DST convergence.")
 
@@ -948,11 +948,11 @@ if MPI.COMM_WORLD.rank == 0:
             
             # If differences are small, DST is converged
             if max_rel_diff < 1e-6:
-                print(f"    ✓ DST converged (M={M_test} is sufficient)")
+                print(f"    DST converged (M={M_test} is sufficient)")
             elif max_rel_diff < 1e-4:
-                print(f"    ⚠ DST may need more modes (M={M_test} might be borderline)")
+                print(f"    Warning: DST may need more modes (M={M_test} might be borderline)")
             else:
-                print(f"    ✗ DST not converged (need M > {M_test})")
+                print(f"    DST not converged (need M > {M_test})")
             
             M_ref = M_test
     
