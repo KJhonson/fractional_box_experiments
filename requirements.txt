@@ -1,11 +1,7 @@
 numpy
 scipy
 matplotlib
-mpmath
 mpi4py
 petsc4py
 fenics-dolfinx
 ufl
-triangle
-ipython
-baryrat

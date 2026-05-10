@@ -87,12 +87,6 @@ def f_indicator_half_one(x):
     """Indicator function: f(x) = 1_[0,1/2](x)"""
     return np.where(x[0] <= 0.5, 1.0, 0.0)
 
-    """Indicator function: f(x) = 1_[0,1/2])(x)+0.5\delta_{0.5}(x)"""
-    # x_vals = x[0]
-    # result = np.where(x_vals < 0.5, 1.0, 0.0)
-    # result = np.where(np.abs(x_vals - 0.5) < 1e-10, 0.5, result)
-    # return result
-
 
 def sol_exact_dirichlet_series(beta: float, N_modes: int = 4000):
     """

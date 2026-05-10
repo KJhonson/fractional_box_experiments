@@ -59,13 +59,17 @@ Main entry points:
 - `f_ex_indicator.py`: indicator-function experiment.
 - `f_ex_xalpha.py`: `x^(-alpha)` experiment.
 
+Local Python utilities:
+
+- `loads.py`: right-hand-side assembly.
+- `norm.py`: error norms.
+- `sinc_solver.py`: sinc quadrature solver.
+
 Example commands:
 
 ```sh
 python python_fem/1d_experiments/f_ex_xalpha.py
-python python_fem/1d_experiments/f_ex_indicator_v2.py
-python python_fem/1d_experiments/f_ok_stoch.py
-python python_fem/1d_experiments/stoch.nonuniform.py
+python python_fem/1d_experiments/f_ex_indicator.py
 ```
 
 ## Dependencies
@@ -87,13 +91,9 @@ Python packages:
 - `numpy`
 - `scipy`
 - `matplotlib`
-- `mpmath`
 - `mpi4py`
 - `petsc4py`
 - `dolfinx`
 - `ufl`
-- `triangle`
-- `IPython`
-- `baryrat`
 
 The Python experiments require a FEniCSx/PETSc/MPI environment.
