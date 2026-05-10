@@ -35,9 +35,7 @@ for (i in seq_along(approx_env)) {
 A[[i]] <- fm_evaluator(approx_env[[i]]$mesh, overkill_env$mesh$loc[, 1:2])$proj$A
 }
 
-# Save and reload a runtime-generated checkpoint. This keeps the experiment
-# self-contained while allowing the expensive mesh/matrix setup to be inspected
-# or reused after a run; checkpoint.RData is generated output and is ignored by Git.
+# Save the mesh and transfer matrices for the solver stage.
 save.image(file = "checkpoint.RData")
 
 # Remove all objects from the environment

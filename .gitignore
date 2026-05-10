@@ -23,7 +23,6 @@ __pycache__/
 outputs/*
 !outputs/.gitkeep
 
-# Generated experiment tables.
 R/loop_experiment/errors2d.dat
 R/loop_experiment/betaxslope.dat
 R/loop_experiment/checkpoint.RData
