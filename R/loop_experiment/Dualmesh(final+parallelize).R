@@ -3,9 +3,6 @@
 # ==============================================================================
 # This script implements functions to construct dual meshes from triangular 
 # finite element meshes and evaluate functions between different mesh resolutions.
-# 
-# Author: [Your Name]
-# Date: [Date]
 # ==============================================================================
 
 # Required Libraries
